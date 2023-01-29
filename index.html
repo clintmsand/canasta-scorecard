@@ -1,0 +1,408 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="apple-touch-icon" href="assets/images/clinasta.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+    <title>Canasta Scorecard</title>
+
+    <style>
+      .modal-backdrop.show  {
+        opacity: .8;
+      }
+      .btn:focus {
+        outline: none;
+        box-shadow: none;
+      }
+      table, tr, td {
+        text-align: center; 
+        vertical-align: middle; 
+      }
+      .error {
+        outline: 1px solid red;
+      }
+      .modal-enter-active,
+      .modal-leave-active {
+        transition: opacity .5s;
+      }
+      .modal-enter,
+      .modal-leave-to {
+        opacity: 0;
+      }
+      .myModalSize {
+        display: block;
+        position: fixed;
+          width: 300px;
+          height: 200px;
+          top: 25%;
+          left: 50%;
+          margin-top: -100px; /* Negative half of height. */
+          margin-left: -150px; /* Negative half of width. */
+      }
+      .modal-backdrop {
+        background-color: #000;
+        opacity: .5 !important;
+        z-index: 0;
+
+      }
+      .modal-content {
+        background-color: white;
+        opacity: 100 !important;
+        /* z-index: 100; */
+      }
+      
+      
+    </style>
+    <meta property="og:image" content="assets/images/clinasta.png" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+  </head>
+
+  <body>
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Canasta Classic Scorecard</a>
+        <!--
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+              
+              <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Drills
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">Holster Draw</a></li>
+                <li><a class="dropdown-item" href="#">Up+1</a></li>
+                <li><a class="dropdown-item" href="#">Up-Multiple</a></li>
+                <li><a class="dropdown-item" href="#">Problem Solving</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Settin
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Help</a>
+            </li>
+              -->
+          </ul>
+        </div>
+    </div>
+  </nav>
+
+<br />
+<br />
+
+<!--<div class="container-fluid">-->
+
+  <div id="app" class="app">
+    <div :class="{ 'modal-backdrop': inputPlayer1Name }"></div>
+    <transition name="modal">
+      <div v-if="inputPlayer1Name">
+        <div class="modal-mask">
+          <div class="modal-wrapper" :class="{ myModalSize: inputPlayer1Name }">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Change Name 1</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"  @click="inputPlayer1Name = false">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <input v-model="player1New" v-if="inputPlayer1Name" :class="{ error: player1NameHasError }" placeholder="Jane" />
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" @click="inputPlayer1Name = false">Cancel</button>
+                  <button type="button" class="btn btn-primary" @click="savePlayerName('Player1', player1New)">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    
+    
+    <!-- <h1 v-html="title"></h1> -->
+    <div :class="{ 'modal-backdrop': inputPlayer2Name }"></div>
+      <transition name="modal">
+        <div v-if="inputPlayer2Name">
+          <div class="modal-mask">
+            <div class="modal-wrapper" :class="{ myModalSize: inputPlayer2Name }">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Change Name 2</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="inputPlayer2Name = false">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <input v-model="player2New" v-if="inputPlayer2Name" :class="{ error: player2NameHasError }" placeholder="Jane" />
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="inputPlayer2Name = false">Cancel</button>
+                    <button type="button" class="btn btn-primary" @click="savePlayerName('Player2', player2New)">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+     
+<div class="container">
+
+    <table width="100%"> 
+      <thead>
+      <th>Points</th>
+      <th>{{player1}} <a href="#" @click="editPlayerName('Player1')"><small><i class="bi bi-pencil"></i></small></a>
+        
+        <!--
+        <input v-model="player1New" v-if="inputPlayer1Name" :class="{ error: player1NameHasError }" placeholder="Jane" @change="savePlayerName('Player1', player1New)"/>
+        <button v-if="inputPlayer1Name" class="btn btn-primary btn-close" type="button" aria-label="Close" v-on:click="inputPlayer1Name = false"></button>
+        <button v-if="inputPlayer1Name" class="btn btn-primary" type="button" v-on:click="savePlayerName('Player1', player1New)" :disabled=player1NameHasError><i class="bi bi-check2"></i></button>
+        -->
+      </th>
+    </thead>
+    <tr>
+      <td>Going Out</td>
+      <td>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="checkbox" v-model="player1GoOut" @click="goOut('player1')">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td># of Red 3s</td>
+      <td>
+        <button class="btn btn-primary" type="button" v-on:click="redThreeCount('player1', 'down')">-</button>
+        {{player1RedThreeCount}}
+        <button class="btn btn-primary" type="button" v-on:click="redThreeCount('player1', 'up')">+</button>
+      </td>
+    </tr>
+    <tr>
+      <td># of Natural Canastas</td>
+      <td>
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'down', 'natural')">-</button>
+        {{player1NaturalCanastaCount}}
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'up', 'natural')">+</button>
+      </td>
+    </tr>
+    <tr>
+      <td># of Mixed Canastas</td>
+      <td>
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'down', 'mixed')">-</button>
+        {{player1MixedCanastaCount}}
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player1', 'up', 'mixed')">+</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Base Points</td>
+      <td>{{player1Score}}</td>
+    </tr>
+    <tr>
+      <td>Card In Hand Point Total</td>
+      <td><input v-model="player1CardHandValue" :class="{ error: player1CardHandValueHasError }" placeholder="0" @change="makeTotalScore('player1')" :disabled=player1CardHandValueIsDisabled /></td>
+    </tr>
+    <tr>
+      <td>Card Point Total (<a style="cursor:pointer;" title="
+        Jokers: 50 points each
+        A, 2: 20 points each
+        K, Q, J, 10, 9, 8:	10 points each
+        7, 6, 5, 4: 5 points each
+        ">?</a>)
+      </td>
+      <td class="center-block"><input v-model="player1CardValue" class="form-control" :class="{ 'is-invalid': player1CardValueHasError }" maxlength="4" style="width:20em;" placeholder="0" @change="makeTotalScore('player1')" required/>
+      <div class="invalid-feedback">
+        Numbers only
+      </div>
+      </td>
+    </tr>
+    <tr>
+      <td>Total Score</td>
+      <td>{{player1TotalScore}}</td>
+
+    </tr>
+    </table><!-- player 1 -->
+  
+</div>
+
+    <br />
+    <hr />
+    <br />
+    
+    <table width="100%"> 
+      <thead>
+      <th>Points</th>
+      <th>{{player2}} <a href="#" @click="editPlayerName('Player2')"><small><i class="bi bi-pencil"></i></small></a>
+        <input v-model="player2New" v-if="inputPlayer2Name" :class="{ error: player2NameHasError }" placeholder="Jane" @change="savePlayerName('Player2', player2New)"/>
+        <button v-if="inputPlayer2Name" class="btn btn-primary btn-close" type="button" aria-label="Close" v-on:click="inputPlayer2Name = false"></button>
+        <button v-if="inputPlayer2Name" class="btn btn-primary" type="button" v-on:click="savePlayerName('Player2', player2New)" :disabled=player2NameHasError><i class="bi bi-check2"></i></button>
+      </th>
+    </thead>
+    <tr>
+      <td>Going Out</td>
+      <td>
+        <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="checkbox" v-model="player2GoOut" @click="goOut('player2')">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td># of Red 3s</td>
+      <td>
+        <button class="btn btn-primary" type="button" v-on:click="redThreeCount('player2', 'down')">-</button>
+        {{player2RedThreeCount}}
+        <button class="btn btn-primary" type="button" v-on:click="redThreeCount('player2', 'up')">+</button>
+      </td>
+    </tr>
+    <tr>
+      <td># of Natural Canastas</td>
+      <td>
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player2', 'down', 'natural')">-</button>
+        {{player2NaturalCanastaCount}}
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player2', 'up', 'natural')">+</button>
+      </td>
+    </tr>
+    <tr>
+      <td># of Mixed Canastas</td>
+      <td>
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player2', 'down', 'mixed')">-</button>
+        {{player2MixedCanastaCount}}
+        <button class="btn btn-primary" type="button" v-on:click="canastaCount('player2', 'up', 'mixed')">+</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Base Points</td>
+      <td>{{player2Score}}</td>
+    </tr>
+    <tr>
+      <td>Card In Hand Point Total</td>
+      <td><input v-model="player2CardHandValue" :class="{ error: player2CardHandValueHasError }" placeholder="750" @change="makeTotalScore('player2')" :disabled=player2CardHandValueIsDisabled /></td>
+    </tr>
+    <tr>
+      <td>Card Point Total</td>
+      <td><input v-model="player2CardValue" :class="{ error: player2CardValueHasError }" placeholder="750" @change="makeTotalScore('player2')"/></td>
+    </tr>
+    <tr>
+      <td>Total Score</td>
+      <td>{{player2TotalScore}}</td>
+    </tr>
+    </table><!-- player 2 -->
+
+    <br />
+    <hr />
+    <br />
+<div class="container">
+    <div class="d-grid gap-2"><button v-show="!gameOver" class="btn btn-primary" type="button" v-on:click="saveScores()" :disabled=hasError>Save Round</button></div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Round</th>
+          <th>{{ player1 }}</th>
+          <th>{{ player2 }}</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(score,i) in scores" :key="i">
+           <td>{{ i+1 }}</td>
+           <td>{{ score[0].Player1 }}</td> 
+           <td>{{ score[0].Player2 }}</td> 
+           <td><i v-show="!gameOver" class="bi bi-trash" style="cursor:pointer;" @click="removeRound(i, score[0].Player1, score[0].Player2)"></i></td>
+        </tr>
+        <tr>
+          <td>Total:</td>
+          <td>{{ player1TotalGameScore }}</td>
+          <td>{{ player2TotalGameScore }}</td>
+          <td></td>
+        </tr>
+       </tbody>
+    </table>
+    <div v-if="player1Win" class="alert alert-success text-center" role="alert">
+      {{ player1 }} Wins!
+    </div>
+    <div v-if="player2Win" class="alert alert-success text-center" role="alert">
+      {{ player2 }} Wins!
+    </div>
+    <button class="btn btn-primary" type="button" v-on:click="resetAll()">Reset</button>
+
+  </div>
+
+
+ 
+<!--</div>--> <!-- container -->
+
+<br /><br />
+<!-- Footer -->
+<footer class="bg-primary text-center text-white text-lg-start">
+  <!-- Grid container -->
+  <div class="container p-4">
+    <!--Grid row-->
+    <div class="row">
+      <!--Grid column-->
+      <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+        
+      
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+        
+      </div>
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+  </div>
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+  <div class="text-center p-3 text-white">
+    &copy; <script>year = new Date().getFullYear(); document.write(year);</script> Copyright: Clinasta Inc.
+  </div>
+  <!-- Copyright -->
+</footer>
+<!-- Footer -->
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
+<script src="scorecard.js"></script>
+
+
+</div><!-- end vue app -->
+</body>
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
